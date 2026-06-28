@@ -1,0 +1,421 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lil_o — Gauthier Lefebvre</title>
+    <meta name="description" content="Lil_o, application utilitaire légère en HTML/CSS/JavaScript par Gauthier Lefebvre.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: { sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'] },
+            transitionTimingFunction: { 'spring': 'cubic-bezier(0.32,0.72,0,1)' },
+          }
+        }
+      }
+    </script>
+    <style>
+        :root {
+            view-transition-name: project-page;
+            --surface-color: #1C1B1A;
+            --accent-primary: #5E409D;
+            --accent-light: #a78bfa;
+            --text-main: #CECDC3;
+            --text-muted: #6F6E69;
+            --border: rgba(94,64,157,0.2);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body {
+            background-color: #100F0F;
+            color: #CECDC3;
+            font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+        }
+
+        /* FILM GRAIN OVERLAY */
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            z-index: 50;
+            pointer-events: none;
+            opacity: 0.028;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        }
+
+        /* RADIAL ORBS */
+        .orb { position: fixed; border-radius: 50%; filter: blur(140px); z-index: -1; pointer-events: none; }
+        .orb-1 { width: 700px; height: 700px; top: -15%; right: -10%; background: radial-gradient(circle, rgba(94,64,157,0.12) 0%, transparent 70%); animation: blobDrift 25s ease-in-out infinite; }
+        .orb-2 { width: 600px; height: 600px; bottom: -12%; left: -8%; background: radial-gradient(circle, rgba(36,131,123,0.09) 0%, transparent 70%); animation: blobDrift 28s ease-in-out infinite reverse; }
+        .orb-3 { width: 500px; height: 500px; top: 50%; left: 50%; transform: translate(-50%, -50%); background: radial-gradient(circle, rgba(94,64,157,0.06) 0%, transparent 70%); animation: blobDrift 22s ease-in-out infinite; }
+        @keyframes blobDrift {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -50px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+        }
+
+        /* TOP-RIGHT NAV */
+        .nav-top {
+            position: fixed; top: 1.5rem; right: 1.5rem; z-index: 100;
+            display: flex; align-items: center; gap: 2rem;
+        }
+        .nav-top a {
+            color: rgba(255,255,255,0.45);
+            text-decoration: none;
+            font-size: 0.825rem; font-weight: 500; letter-spacing: 0.02em;
+            transition: color 0.5s cubic-bezier(0.32,0.72,0,1);
+        }
+        .nav-top a:hover { color: #fff; }
+        .nav-top .nav-active { color: #fff; font-weight: 600; }
+
+        /* HAMBURGER */
+        .hamburger {
+            display: none;
+            width: 36px; height: 36px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 50%;
+            cursor: pointer;
+            position: fixed; top: 1.5rem; right: 1.5rem; z-index: 200;
+            align-items: center; justify-content: center;
+            transition: all 0.7s cubic-bezier(0.32,0.72,0,1);
+        }
+        .hamburger:hover { border-color: rgba(94,64,157,0.4); }
+        .hamburger-line {
+            position: absolute; width: 16px; height: 1.5px; background: #fff;
+            border-radius: 1px; transition: all 0.5s cubic-bezier(0.32,0.72,0,1);
+        }
+        .hamburger-line:nth-child(1) { transform: translateY(-4px); }
+        .hamburger-line:nth-child(2) { transform: translateY(4px); }
+        .hamburger.open .hamburger-line:nth-child(1) { transform: translateY(0) rotate(45deg); }
+        .hamburger.open .hamburger-line:nth-child(2) { transform: translateY(0) rotate(-45deg); }
+
+        /* MOBILE MENU OVERLAY */
+        .menu-overlay {
+            position: fixed; inset: 0; z-index: 150;
+            background: rgba(5,5,5,0.92);
+            backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center; gap: 2.5rem;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.7s cubic-bezier(0.32,0.72,0,1);
+        }
+        .menu-overlay.open { opacity: 1; pointer-events: auto; }
+        .menu-link {
+            font-size: 2rem; font-weight: 700;
+            color: rgba(255,255,255,0.5);
+            text-decoration: none;
+            transform: translateY(48px); opacity: 0;
+            transition: all 0.7s cubic-bezier(0.32,0.72,0,1);
+        }
+        .menu-overlay.open .menu-link:nth-child(1) { transition-delay: 0.1s; transform: translateY(0); opacity: 1; }
+        .menu-overlay.open .menu-link:nth-child(2) { transition-delay: 0.15s; transform: translateY(0); opacity: 1; }
+        .menu-overlay.open .menu-link:nth-child(3) { transition-delay: 0.2s; transform: translateY(0); opacity: 1; }
+
+        /* SCROLL REVEAL */
+        .reveal { opacity: 0; transform: translateY(40px); filter: blur(8px); transition: all 0.9s cubic-bezier(0.32,0.72,0,1); }
+        .reveal.visible { opacity: 1; transform: translateY(0); filter: blur(0); }
+
+        /* ==== PROJECT PAGE ==== */
+        .container { max-width: 900px; margin: 0 auto; padding: 0 2rem; }
+        .back-link {
+            display: inline-flex; align-items: center; gap: 8px;
+            color: rgba(255,255,255,0.45); text-decoration: none;
+            margin: 6rem 0 1.5rem; font-size: 0.9rem; font-weight: 500;
+            letter-spacing: 0.02em;
+            transition: all 0.5s cubic-bezier(0.32,0.72,0,1);
+        }
+        .back-link:hover { color: #fff; transform: translateX(-3px); }
+        .project-title {
+            font-size: clamp(2.2rem, 5vw, 3.2rem); font-weight: 800; letter-spacing: -0.03em;
+            color: #fff; margin-bottom: 2rem; line-height: 0.95;
+        }
+        .project-hero {
+            border-radius: 1.5rem; margin-bottom: 1.5rem;
+            text-align: center; position: relative; overflow: hidden;
+            transition: opacity 0.5s cubic-bezier(0.32,0.72,0,1), transform 0.5s cubic-bezier(0.32,0.72,0,1);
+            background: var(--surface-color);
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .project-hero img {
+            width: 100%; height: 500px; object-fit: contain; display: block;
+            background: var(--surface-color);
+        }
+        .image-nav {
+            position: absolute; top: 0; bottom: 0;
+            width: 80px; z-index: 2; cursor: pointer; border: none;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; color: #fff; background: transparent;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+            transition: background 0.5s cubic-bezier(0.32,0.72,0,1);
+        }
+        .image-nav:hover { background: rgba(0,0,0,0.15); }
+        .image-nav.prev { left: 0; border-radius: 1.5rem 0 0 1.5rem; }
+        .image-nav.next { right: 0; border-radius: 0 1.5rem 1.5rem 0; }
+        .gallery-container { position: relative; margin-bottom: 3rem; }
+        .gallery {
+            display: flex; gap: 12px;
+            overflow-x: auto; padding: 8px 0 4px;
+            scrollbar-width: none; justify-content: flex-start;
+            cursor: grab; user-select: none;
+            scroll-behavior: smooth;
+        }
+        .gallery::-webkit-scrollbar { display: none; }
+        .gallery:active { cursor: grabbing; }
+        .gallery-btn {
+            position: absolute; top: 0; bottom: 0;
+            width: 52px; z-index: 5;
+            cursor: pointer; border: none;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem;
+            color: #fff;
+            background: transparent;
+            transition: all 0.5s cubic-bezier(0.32,0.72,0,1);
+            opacity: 0; pointer-events: none;
+        }
+        .gallery-container:hover .gallery-btn { opacity: 1; pointer-events: auto; }
+        .gallery-btn:hover { color: var(--accent-light); }
+        .gallery-btn.prev {
+            left: 0;
+            background: linear-gradient(to right, #100F0F 0%, transparent 100%);
+            border-radius: 12px 0 0 12px;
+        }
+        .gallery-btn.next {
+            right: 0;
+            background: linear-gradient(to left, #100F0F 0%, transparent 100%);
+            border-radius: 0 12px 12px 0;
+        }
+        .gallery-thumb {
+            min-width: 120px; height: 80px; border-radius: 12px;
+            cursor: pointer; flex-shrink: 0; border: 2px solid transparent;
+            transition: all 0.5s cubic-bezier(0.32,0.72,0,1); opacity: 0.6;
+            position: relative; overflow: hidden;
+        }
+        .gallery-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; -webkit-user-drag: none; user-select: none; }
+        .gallery-thumb:hover { transform: translateY(-4px); opacity: 0.85; box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+        .gallery-thumb.active {
+            border-color: var(--accent-primary); opacity: 1;
+            transform: translateY(-4px);
+            box-shadow: 0 0 0 2px var(--accent-primary);
+        }
+        .project-content { padding-bottom: 4rem; }
+        .project-content h2 {
+            font-size: 1.6rem; font-weight: 700; letter-spacing: -0.02em;
+            margin: 2.5rem 0 1rem; color: #fff;
+        }
+        .project-content p { color: var(--text-muted); margin-bottom: 1rem; font-size: 1.05rem; }
+        .project-content ul { color: var(--text-muted); margin: 1rem 0 1.5rem 1.5rem; }
+        .project-content li { margin-bottom: 0.5rem; }
+        .tech-list { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 1.5rem; }
+        .tech-tag {
+            padding: 0.3rem 0.7rem;
+            border-radius: 9999px;
+            background: rgba(94,64,157,0.15);
+            border: 1px solid rgba(94,64,157,0.2);
+            font-size: 0.75rem; font-weight: 600;
+            color: var(--accent-light);
+        }
+        footer {
+            padding: 3rem; text-align: center;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            color: var(--text-muted); font-size: 0.9rem;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .nav-top { display: none; }
+            .hamburger { display: flex; }
+            .project-title { font-size: 2rem; }
+            .project-hero img { height: 300px; }
+            .gallery-thumb { min-width: 90px; height: 60px; }
+            .gallery-btn { width: 36px; font-size: 1rem; }
+            .container { padding: 0 1.25rem; }
+            .back-link { margin-top: 5rem; }
+            .orb { display: none; }
+        }
+        @media (hover: none) {
+            .gallery-btn { opacity: 0.7; pointer-events: auto; }
+        }
+
+        /* VIEW TRANSITIONS */
+        @view-transition { navigation: auto; }
+        @keyframes slide-out-left { from { transform: translateX(0); } to { transform: translateX(-100%); } }
+        @keyframes slide-in-right { from { transform: translateX(100%); } to { transform: translateX(0); } }
+        @keyframes slide-out-right { from { transform: translateX(0); } to { transform: translateX(100%); } }
+        @keyframes slide-in-left { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+        ::view-transition-old(index-page) { animation: slide-out-left 0.35s ease-in; }
+        ::view-transition-new(index-page) { animation: slide-in-left 0.35s ease-out; }
+        ::view-transition-old(project-page) { animation: slide-out-right 0.35s ease-in; }
+        ::view-transition-new(project-page) { animation: slide-in-right 0.35s ease-out; }
+    </style>
+</head>
+<body>
+
+    <!-- ATMOSPHERIC ORBS -->
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <!-- HAMBURGER (mobile only) -->
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+    </button>
+
+    <!-- MOBILE MENU OVERLAY -->
+    <nav class="menu-overlay" id="menuOverlay">
+        <a href="../index.html" class="menu-link" onclick="closeMenu()">Accueil</a>
+        <a href="../index.html#projets" class="menu-link" onclick="closeMenu()">Projets</a>
+        <a href="https://github.com/GauthierLefebvre" target="_blank" class="menu-link" onclick="closeMenu()">GitHub ↗</a>
+    </nav>
+
+    <!-- TOP-RIGHT NAV (desktop) -->
+    <nav class="nav-top" id="navTop">
+        <a href="../index.html">Accueil</a>
+        <a href="../index.html#projets" class="nav-active">Projets</a>
+        <a href="https://github.com/GauthierLefebvre" target="_blank">GitHub ↗</a>
+    </nav>
+
+    <main>
+        <div class="container">
+            <a href="../index.html#projets" class="back-link">← Retour aux projets</a>
+            <h1 class="project-title reveal">Lil_o</h1>
+            <div class="project-hero reveal" id="mainImage">
+                <button class="image-nav prev" id="prevBtn" aria-label="Image précédente">←</button>
+                <img id="mainImg" src="../Images/Lil_o/Lil_o-1.png" alt="Lil_o">
+                <button class="image-nav next" id="nextBtn" aria-label="Image suivante">→</button>
+            </div>
+            <div class="gallery-container reveal">
+                <button class="gallery-btn prev" id="galleryPrevBtn" aria-label="Images précédentes">‹</button>
+                <button class="gallery-btn next" id="galleryNextBtn" aria-label="Images suivantes">›</button>
+                <div class="gallery" id="gallery"></div>
+            </div>
+            <div class="project-content reveal">
+                <h2>À propos du projet</h2>
+                <p>Lil_o est une application utilitaire légère avec une interface minimaliste et épurée. Conçue pour être rapide et efficace, elle offre une expérience utilisateur fluide sans fonctionnalités superflues.</p>
+                <h2>Fonctionnalités clés</h2>
+                <ul>
+                    <li>Interface minimaliste et réactive</li>
+                    <li>Performances optimisées pour les appareils mobiles</li>
+                    <li>Fonctionnement hors-ligne</li>
+                    <li>Personnalisation de l'interface</li>
+                </ul>
+                <h2>Technologies utilisées</h2>
+                <div class="tech-list">
+                    <span class="tech-tag">HTML/CSS</span>
+                    <span class="tech-tag">JavaScript</span>
+                    <span class="tech-tag">LocalStorage</span>
+                </div>
+            </div>
+        </div>
+        <footer><p>© <span id="year"></span> Gauthier Lefebvre</p></footer>
+    </main>
+
+    <script>
+        // ==== HAMBURGER MENU ====
+        const hamburger = document.getElementById('hamburger');
+        const menuOverlay = document.getElementById('menuOverlay');
+        let menuOpen = false;
+        hamburger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            menuOpen = !menuOpen;
+            hamburger.classList.toggle('open', menuOpen);
+            menuOverlay.classList.toggle('open', menuOpen);
+            document.body.style.overflow = menuOpen ? 'hidden' : '';
+        });
+        function closeMenu() {
+            menuOpen = false;
+            hamburger.classList.remove('open');
+            menuOverlay.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+        menuOverlay.addEventListener('click', (e) => { if (e.target === menuOverlay) closeMenu(); });
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && menuOpen) closeMenu(); });
+
+        // ==== SCROLL REVEAL ====
+        const revealEls = document.querySelectorAll('.reveal');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+        revealEls.forEach(el => observer.observe(el));
+
+        // ==== YEAR ====
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        // ==== GALLERY ====
+        const screenshots = [            { image: "../Images/Lil_o/Lil_o-1.png", label: "Lil_o-1" },
+            { image: "../Images/Lil_o/Lil_o-2.png", label: "Lil_o-2" },
+            { image: "../Images/Lil_o/Lil_o-3.png", label: "Lil_o-3" }];
+        const mainImg = document.getElementById('mainImg');
+        const gallery = document.getElementById('gallery');
+        let current = 0;
+
+        function navigateTo(index) {
+            if (index < 0) index = screenshots.length - 1;
+            if (index >= screenshots.length) index = 0;
+            if (index === current) return;
+            document.querySelector('.gallery-thumb.active').classList.remove('active');
+            gallery.children[index].classList.add('active');
+            mainImg.style.opacity = '0';
+            mainImg.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                mainImg.src = screenshots[index].image;
+                mainImg.style.opacity = '1';
+                mainImg.style.transform = 'scale(1)';
+            }, 200);
+            current = index;
+        }
+
+        screenshots.forEach((s, i) => {
+            const thumb = document.createElement('div');
+            thumb.className = 'gallery-thumb' + (i === 0 ? ' active' : '');
+            const img = document.createElement('img');
+            img.src = s.image; img.alt = s.label; img.loading = 'lazy';
+            thumb.appendChild(img); thumb.title = s.label;
+            thumb.addEventListener('click', () => { if (gallery.didDrag) return; navigateTo(i); });
+            gallery.appendChild(thumb);
+        });
+
+        document.getElementById('prevBtn').addEventListener('click', () => navigateTo(current - 1));
+        document.getElementById('nextBtn').addEventListener('click', () => navigateTo(current + 1));
+
+        // Gallery drag-to-scroll
+        let isDown = false, startX, scrollLeft;
+        gallery.addEventListener('mousedown', (e) => {
+            isDown = true; e.preventDefault(); gallery.didDrag = false;
+            gallery.classList.add('active');
+            startX = e.pageX - gallery.offsetLeft; scrollLeft = gallery.scrollLeft;
+        });
+        gallery.addEventListener('mouseleave', () => { isDown = false; gallery.classList.remove('active'); });
+        gallery.addEventListener('mouseup', () => { isDown = false; gallery.classList.remove('active'); });
+        gallery.addEventListener('mousemove', (e) => {
+            if (!isDown) return; e.preventDefault();
+            const x = e.pageX - gallery.offsetLeft;
+            const walk = (x - startX) * 1.5;
+            gallery.scrollLeft = scrollLeft - walk;
+            if (Math.abs(walk) > 5) gallery.didDrag = true;
+        });
+
+        // Gallery arrow buttons
+        const thumbStyle = getComputedStyle(document.querySelector('.gallery-thumb'));
+        const thumbWidth = parseInt(thumbStyle.minWidth);
+        const thumbGap = 12;
+        const galleryScrollAmount = thumbWidth + thumbGap;
+        document.getElementById('galleryPrevBtn').addEventListener('click', () => { gallery.scrollBy({ left: -galleryScrollAmount, behavior: 'smooth' }); });
+        document.getElementById('galleryNextBtn').addEventListener('click', () => { gallery.scrollBy({ left: galleryScrollAmount, behavior: 'smooth' }); });
+
+        if (gallery.scrollWidth <= gallery.clientWidth) { gallery.style.justifyContent = 'center'; }
+    </script>
+</body>
+</html>
