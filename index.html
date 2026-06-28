@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gauthier Lefebvre — Game Developer Portfolio</title>
+    <meta name="description" content="Portfolio de Gauthier Lefebvre, développeur jeu vidéo Unity / Unreal Engine.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: { sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'] },
+            animation: {
+              'blob-drift': 'blobDrift 25s ease-in-out infinite',
+              'blob-drift-reverse': 'blobDrift 28s ease-in-out infinite reverse',
+              'fade-up': 'fadeUp 0.9s cubic-bezier(0.32,0.72,0,1) forwards',
+              'morph-x': 'morphX 0.5s cubic-bezier(0.32,0.72,0,1) forwards',
+            },
+            keyframes: {
+              blobDrift: {
+                '0%, 100%': { transform: 'translate(0, 0) scale(1)' },
+                '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+              },
+              fadeUp: {
+                '0%': { opacity: '0', transform: 'translateY(60px)', filter: 'blur(8px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)', filter: 'blur(0)' },
+              },
+              morphX: {
+                '0%': { transform: 'rotate(0deg)' },
+                '100%': { transform: 'rotate(45deg)' },
+              },
+            },
+            transitionTimingFunction: {
+              'spring': 'cubic-bezier(0.32,0.72,0,1)',
+            },
+          }
+        }
+      }
+    </script>
+    <style>
+        /* ==== GLOBAL RESET & BASE ==== */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html {
+            scroll-behavior: smooth;
+        }
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+        body {
+            background-color: #100F0F;
+            color: #CECDC3;
+            font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ==== FILM GRAIN OVERLAY ==== */
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            z-index: 50;
+            pointer-events: none;
+            opacity: 0.028;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        }
+
+        /* ==== RADIAL ORB GRADIENTS ==== */
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(140px);
+            z-index: -1;
+            pointer-events: none;
+        }
+        .orb-1 {
+            width: 700px; height: 700px;
+            top: -15%; right: -10%;
+            background: radial-gradient(circle, rgba(94,64,157,0.12) 0%, transparent 70%);
+            animation: blobDrift 25s ease-in-out infinite;
+        }
+        .orb-2 {
+            width: 600px; height: 600px;
+            bottom: -12%; left: -8%;
+            background: radial-gradient(circle, rgba(36,131,123,0.09) 0%, transparent 70%);
+            animation: blobDrift 28s ease-in-out infinite reverse;
+        }
+        .orb-3 {
+            width: 500px; height: 500px;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(circle, rgba(94,64,157,0.06) 0%, transparent 70%);
+            animation: blobDrift 22s ease-in-out infinite;
+        }
+
+        /* ==== SNAP CONTAINER ==== */
+        .snap-container {
+            height: 100vh;
+            overflow-y: scroll;
+            -webkit-overflow-scrolling: touch;
+            scroll-snap-type: y mandatory;
+        }
+        .snap-section {
+            height: 100dvh;
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 80px 2rem;
+            position: relative;
+            scroll-snap-align: start;
+            scroll-snap-stop: always;
+        }
+
+        /* ==== DOUBLE-BEZEL (Doppelrand) ==== */
+        .double-bezel-outer {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.06);
+            padding: 1.5px;
+            border-radius: 2rem;
+            transition: all 0.7s cubic-bezier(0.32,0.72,0,1);
+        }
+        .double-bezel-outer:hover {
+            border-color: rgba(94,64,157,0.25);
+            background: rgba(255,255,255,0.05);
+        }
+        .double-bezel-inner {
+            background: rgba(10,10,12,0.92);
+            border-radius: calc(2rem - 0.375rem);
+            box-shadow: inset 0 1px 1px rgba(255,255,255,0.08);
+            height: 100%;
+            overflow: hidden;
+        }
+
+        /* ==== NAVIGATION — TOP-RIGHT TEXT ==== */
+        .nav-top {
+            position: fixed;
+            top: 1.5rem;
+            right: 1.5rem;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+        .nav-top a {
+            color: rgba(255,255,255,0.45);
+            text-decoration: none;
+            font-size: 0.825rem;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+            transition: color 0.5s cubic-bezier(0.32,0.72,0,1);
+        }
+        .nav-top a:hover { color: #fff; }
+        .nav-top .nav-active { color: #fff; font-weight: 600; }
+
+        /* ==== HAMBURGER ==== */
+        .hamburger {
+            display: none;
+            width: 36px; height: 36px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 50%;
+            cursor: pointer;
+            position: fixed;
+            top: 1.5rem;
+            right: 1.5rem;
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.7s cubic-bezier(0.32,0.72,0,1);
+        }
+        .hamburger:hover { border-color: rgba(94,64,157,0.4); }
+        .hamburger-line {
+            position: absolute;
+            width: 16px; height: 1.5px;
+            background: #fff;
+            border-radius: 1px;
+            transition: all 0.5s cubic-bezier(0.32,0.72,0,1);
+        }
+        .hamburger-line:nth-child(1) { transform: translateY(-4px); }
+        .hamburger-line:nth-child(2) { transform: translateY(4px); }
+        .hamburger.open .hamburger-line:nth-child(1) { transform: translateY(0) rotate(45deg); }
+        .hamburger.open .hamburger-line:nth-child(2) { transform: translateY(0) rotate(-45deg); }
+
+        /* ==== MOBILE MENU OVERLAY ==== */
+        .menu-overlay {
+            position: fixed; inset: 0; z-index: 150;
+            background: rgba(5,5,5,0.92);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center; gap: 2.5rem;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.7s cubic-bezier(0.32,0.72,0,1);
+        }
+        .menu-overlay.open { opacity: 1; pointer-events: auto; }
+        .menu-link {
+            font-size: 2rem; font-weight: 700;
+            color: rgba(255,255,255,0.5);
+            text-decoration: none;
+            transform: translateY(48px);
+            opacity: 0;
+            transition: all 0.7s cubic-bezier(0.32,0.72,0,1);
+        }
+        .menu-overlay.open .menu-link:nth-child(1) { transition-delay: 0.1s; transform: translateY(0); opacity: 1; }
+        .menu-overlay.open .menu-link:nth-child(2) { transition-delay: 0.15s; transform: translateY(0); opacity: 1; }
+        .menu-overlay.open .menu-link:nth-child(3) { transition-delay: 0.2s; transform: translateY(0); opacity: 1; }
+
+        /* ==== SCROLL REVEAL ==== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(60px);
+            filter: blur(8px);
+            transition: all 0.9s cubic-bezier(0.32,0.72,0,1);
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+            filter: blur(0);
+        }
+
+        /* ==== BUTTON-IN-BUTTON ==== */
+        .btn-pill {
+            display: inline-flex; align-items: center; gap: 0.75rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.7s cubic-bezier(0.32,0.72,0,1);
+        }
+        .btn-pill:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(94,64,157,0.4);
+        }
+        .btn-pill:active { transform: scale(0.98); }
+        .btn-icon-circle {
+            width: 32px; height: 32px; border-radius: 50%;
+            background: rgba(94,64,157,0.15);
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.7s cubic-bezier(0.32,0.72,0,1);
+            flex-shrink: 0;
+        }
+        .btn-pill:hover .btn-icon-circle {
+            transform: translateX(3px) translateY(-1px) scale(1.05);
+            background: rgba(94,64,157,0.25);
+        }
+
+        /* ==== BENTO GRID ==== */
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 0.6rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            flex: 1 1 0;
+            min-height: 0;
+        }
+        .bento-card {
+            position: relative;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        .bento-card img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 1.2s cubic-bezier(0.32,0.72,0,1);
+        }
+        .bento-card:hover img { transform: scale(1.06); }
+        .bento-card-overlay {
+            position: absolute; inset: 0;
+            background: linear-gradient(180deg, transparent 35%, rgba(5,5,5,0.92) 100%);
+            pointer-events: none;
+        }
+        .bento-card-content {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            padding: 0.875rem 1rem;
+            z-index: 2;
+        }
+        .bento-card-content .tag {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            border-radius: 9999px;
+            font-size: 0.6rem;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            background: rgba(94,64,157,0.15);
+            color: #a78bfa;
+            margin-bottom: 0.375rem;
+            border: 1px solid rgba(94,64,157,0.2);
+        }
+        .bento-card-content h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: -0.01em;
+        }
+
+        /* ==== PROJETS SECTION — FITS ONE VIEWPORT ==== */
+        #projets.snap-section {
+            height: 100dvh;
+            min-height: 100dvh;
+            padding: 20px 2rem;
+            justify-content: flex-start;
+        }
+
+        /* ==== RESPONSIVE ==== */
+        @media (max-width: 768px) {
+            .nav-top { display: none; }
+            .hamburger { display: flex; }
+            .snap-section { padding: 60px 1rem; }
+            #projets.snap-section {
+                height: auto;
+                min-height: 100dvh;
+                padding: 60px 1rem;
+            }
+            .bento-grid {
+                grid-template-columns: 1fr !important;
+                grid-template-rows: none !important;
+                grid-auto-rows: minmax(130px, auto);
+                gap: 1rem;
+                padding: 0 1rem;
+                flex: none;
+            }
+            .bento-card { grid-column: span 1 !important; grid-row: span 1 !important; }
+            .orb { display: none; }
+            h1 { font-size: 2.5rem !important; }
+        }
+
+        @media (max-width: 1024px) and (min-width: 769px) {
+            .bento-grid { padding: 0 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ATMOSPHERIC ORBS -->
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <!-- HAMBURGER (mobile only) -->
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+    </button>
+
+    <!-- MOBILE MENU OVERLAY -->
+    <nav class="menu-overlay" id="menuOverlay">
+        <a href="#hero" class="menu-link" onclick="closeMenu()">Accueil</a>
+        <a href="#projets" class="menu-link" onclick="closeMenu()">Projets</a>
+        <a href="https://github.com/GauthierLefebvre" target="_blank" class="menu-link" onclick="closeMenu()">GitHub ↗</a>
+    </nav>
+
+    <!-- TOP-RIGHT NAV (desktop) -->
+    <nav class="nav-top" id="navTop">
+        <a href="#hero" class="nav-active">Accueil</a>
+        <a href="#projets">Projets</a>
+        <a href="https://github.com/GauthierLefebvre" target="_blank">GitHub ↗</a>
+    </nav>
+
+    <!-- ======== SNAP CONTAINER ======== -->
+    <div class="snap-container" id="snapContainer">
+
+        <!-- ======== HERO ======== -->
+        <section id="hero" class="snap-section">
+            <div class="text-center max-w-4xl mx-auto reveal" data-reveal>
+                <span class="inline-block px-4 py-1.5 rounded-full text-[10px] font-semibold uppercase tracking-[0.25em] bg-white/5 border border-white/10 text-white/50 mb-8">
+                    Game Developer
+                </span>
+                <h1 class="text-[clamp(3rem,10vw,6.5rem)] font-extrabold leading-[0.95] tracking-[-0.03em] text-white mb-6">
+                    Gauthier<br>Lefebvre
+                </h1>
+                <p class="text-lg md:text-xl text-white/40 max-w-xl mx-auto leading-relaxed mb-0">
+                    Je crée des expériences vidéoludiques mémorables — du game design au code, 
+                    en passant par les shaders et l'architecture moteur.
+                </p>
+            </div>
+            <!-- Scroll arrow button -->
+            <a href="#projets" class="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce opacity-30 hover:opacity-70 transition-all duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] cursor-pointer z-10" aria-label="Voir les projets">
+                <span class="text-[10px] uppercase tracking-[0.3em] text-white/40">Scroll</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+            </a>
+        </section>
+
+        <!-- ======== PROJECTS BENTO ======== -->
+        <section id="projets" class="snap-section">
+            <div class="max-w-[1400px] mx-auto w-full px-8 mb-3 flex items-end justify-between reveal" data-reveal>
+                <div>
+                    <span class="inline-block px-3 py-1 rounded-full text-[10px] font-semibold uppercase tracking-[0.25em] bg-white/5 border border-white/10 text-white/50 mb-2">
+                        Portfolio
+                    </span>
+                    <h2 class="text-[clamp(1.5rem,3.5vw,2.5rem)] font-extrabold leading-none tracking-[-0.03em] text-white">
+                        Projets sélectionnés
+                    </h2>
+                </div>
+                <span class="hidden md:block text-xs uppercase tracking-[0.2em] text-white/30 pb-1">09 projets</span>
+            </div>
+
+            <div class="bento-grid w-full max-w-[1400px] mx-auto">
+                <!-- ═══ FEATURED (left, spans 2 rows) | 2 cards right ═══ -->
+                <a href="projects/weird-quest.html" class="bento-card reveal" data-reveal
+                   style="grid-column: 1/7; grid-row: 1/3; transition-delay: 0.05s;">
+                    <div class="double-bezel-outer" style="height:100%;">
+                        <div class="double-bezel-inner" style="position:relative;">
+                            <img src="Images/WeirdQuest/WQ-1.png" alt="WeirdQuest" loading="eager">
+                            <div class="bento-card-overlay"></div>
+                            <div class="bento-card-content">
+                                <span class="tag">Jeu • Unity</span>
+                                <h3>WeirdQuest</h3>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="projects/mini-knights.html" class="bento-card reveal" data-reveal
+                   style="grid-column: 7/10; grid-row: 1/2; transition-delay: 0.1s;">
+                    <div class="double-bezel-outer" style="height:100%;">
+                        <div class="double-bezel-inner" style="position:relative;">
+                            <img src="Images/Mini_Knights/mk-1.jpg" alt="Mini Knights" loading="lazy">
+                            <div class="bento-card-overlay"></div>
+                            <div class="bento-card-content">
+                                <span class="tag">Jeu • Unity</span>
+                                <h3>Mini Knights</h3>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="projects/magical-mystery.html" class="bento-card reveal" data-reveal
+                   style="grid-column: 10/13; grid-row: 1/2; transition-delay: 0.15s;">
+                    <div class="double-bezel-outer" style="height:100%;">
+                        <div class="double-bezel-inner" style="position:relative;">
+                            <img src="Images/MagicalMystery/MagicalMystery-1.png" alt="Magical Mystery" loading="lazy">
+                            <div class="bento-card-overlay"></div>
+                            <div class="bento-card-content">
+                                <span class="tag">Jeu • Unity</span>
+                                <h3>Magical Mystery</h3>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="projects/overkill.html" class="bento-card reveal" data-reveal
+                   style="grid-column: 7/10; grid-row: 2/3; transition-delay: 0.2s;">
+                    <div class="double-bezel-outer" style="height:100%;">
+                        <div class="double-bezel-inner" style="position:relative;">
+                            <img src="Images/OverKill/Overkill.png" alt="OverKill" loading="lazy">
+                            <div class="bento-card-overlay"></div>
+                            <div class="bento-card-content">
+                                <span class="tag">Jeu • Unity</span>
+                                <h3>OverKill</h3>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="projects/crush-cars.html" class="bento-card reveal" data-reveal
+                   style="grid-column: 10/13; grid-row: 2/3; transition-delay: 0.25s;">
+                    <div class="double-bezel-outer" style="height:100%;">
+                        <div class="double-bezel-inner" style="position:relative;">
+                            <img src="Images/CrushCars/CrushCars-1.png" alt="CrushCars" loading="lazy">
+                            <div class="bento-card-overlay"></div>
+                            <div class="bento-card-content">
+                                <span class="tag">Jeu • Unity</span>
+                                <h3>CrushCars</h3>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- ═══ ROW 3 : 4 equal cards ═══ -->
+                <a href="projects/pokemon-legends-ga.html" class="bento-card reveal" data-reveal
+                   style="grid-column: 1/4; grid-row: 3/4; transition-delay: 0.3s;">
+                    <div class="double-bezel-outer" style="height:100%;">
+                        <div class="double-bezel-inner" style="position:relative;">
+                            <img src="Images/pokemonLegendsGA/PGA-1.png" alt="Pokémon Legends" loading="lazy">
+                            <div class="bento-card-overlay"></div>
+                            <div class="bento-card-content">
+                                <span class="tag">Jeu • Unreal Engine</span>
+                                <h3>Pokémon Legends GA</h3>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="projects/freak-squad.html" class="bento-card reveal" data-reveal
+                   style="grid-column: 4/7; grid-row: 3/4; transition-delay: 0.35s;">
+                    <div class="double-bezel-outer" style="height:100%;">
+                        <div class="double-bezel-inner" style="position:relative;">
+                            <img src="Images/FreakSquad/FreakSquad-1.png" alt="FreakSquad" loading="lazy">
+                            <div class="bento-card-overlay"></div>
+                            <div class="bento-card-content">
+                                <span class="tag">Jeu • Unity</span>
+                                <h3>FreakSquad</h3>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="projects/hearthen-nft.html" class="bento-card reveal" data-reveal
+                   style="grid-column: 7/10; grid-row: 3/4; transition-delay: 0.4s;">
+                    <div class="double-bezel-outer" style="height:100%;">
+                        <div class="double-bezel-inner" style="position:relative;">
+                            <img src="Images/HearthenNF_T/Hs-1.png" alt="Hearthen NFT" loading="lazy">
+                            <div class="bento-card-overlay"></div>
+                            <div class="bento-card-content">
+                                <span class="tag">Jeu • Moteur Custom</span>
+                                <h3>Hearthen NFT</h3>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="projects/lil-o.html" class="bento-card reveal" data-reveal
+                   style="grid-column: 10/13; grid-row: 3/4; transition-delay: 0.45s;">
+                    <div class="double-bezel-outer" style="height:100%;">
+                        <div class="double-bezel-inner" style="position:relative;">
+                            <img src="Images/Lil_o/Lil_o-1.png" alt="Lil_o" loading="lazy">
+                            <div class="bento-card-overlay"></div>
+                            <div class="bento-card-content">
+                                <span class="tag">Application</span>
+                                <h3>Lil_o</h3>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        // ==== HAMBURGER MENU ====
+        const hamburger = document.getElementById('hamburger');
+        const menuOverlay = document.getElementById('menuOverlay');
+        let menuOpen = false;
+
+        hamburger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            menuOpen = !menuOpen;
+            hamburger.classList.toggle('open', menuOpen);
+            menuOverlay.classList.toggle('open', menuOpen);
+            document.body.style.overflow = menuOpen ? 'hidden' : '';
+        });
+
+        function closeMenu() {
+            menuOpen = false;
+            hamburger.classList.remove('open');
+            menuOverlay.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        menuOverlay.addEventListener('click', (e) => {
+            if (e.target === menuOverlay) closeMenu();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && menuOpen) closeMenu();
+        });
+
+        // ==== REFS ====
+        const container = document.getElementById('snapContainer');
+        const hero = document.getElementById('hero');
+        const projets = document.getElementById('projets');
+
+        // ==== SMOOTH SNAP NAVIGATION (arrow + nav links) ====
+        document.querySelectorAll('a[href^="#hero"], a[href^="#projets"]').forEach(link => {
+            link.addEventListener('click', (e) => {
+                const id = link.getAttribute('href');
+                if (!id || !id.startsWith('#')) return;
+                const target = document.querySelector(id);
+                if (!target) return;
+                e.preventDefault();
+                target.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        // ==== INTERSECTION OBSERVER — SCROLL REVEAL ====
+        const revealEls = document.querySelectorAll('[data-reveal]');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.15,
+            rootMargin: '0px 0px -40px 0px',
+            root: container
+        });
+
+        revealEls.forEach(el => observer.observe(el));
+
+        // ==== NAV ACTIVE LINK DETECTION ====
+        const navLinks = document.querySelectorAll('.nav-top a[href^="#"]');
+        const sections = [hero, projets];
+
+        function updateActiveNav() {
+            const scrollTop = container.scrollTop;
+            let current = '';
+            sections.forEach(section => {
+                const offset = section.offsetTop;
+                const height = section.offsetHeight;
+                if (scrollTop >= offset - height * 0.3) {
+                    current = '#' + section.getAttribute('id');
+                }
+            });
+            navLinks.forEach(link => {
+                link.classList.toggle('nav-active', link.getAttribute('href') === current);
+            });
+        }
+
+        container.addEventListener('scroll', updateActiveNav, { passive: true });
+        updateActiveNav();
+    </script>
+</body>
+</html>
