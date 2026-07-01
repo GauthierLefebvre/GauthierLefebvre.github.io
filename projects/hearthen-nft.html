@@ -165,11 +165,12 @@
         .gallery-container { position: relative; margin-bottom: 3rem; max-width: 800px; margin-left: auto; margin-right: auto; }
         .gallery {
             display: flex; gap: 12px;
-            overflow-x: auto; padding: 8px 0 4px;
+            overflow-x: auto; padding: 8px 4px 4px;
             scrollbar-width: none; justify-content: flex-start;
             cursor: grab; user-select: none;
             scroll-behavior: smooth;
             scroll-snap-type: x mandatory;
+            scroll-padding: 0 4px;
         }
         .gallery::-webkit-scrollbar { display: none; }
         .gallery:active { cursor: grabbing; }
@@ -218,14 +219,31 @@
         .project-content p { color: var(--text-muted); margin-bottom: 1rem; font-size: 1.05rem; }
         .project-content ul { color: var(--text-muted); margin: 1rem 0 1.5rem 1.5rem; }
         .project-content li { margin-bottom: 0.5rem; }
-        .tech-list { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 1.5rem; }
-        .tech-tag {
-            padding: 0.3rem 0.7rem;
-            border-radius: 9999px;
-            background: rgba(94,64,157,0.15);
-            border: 1px solid rgba(94,64,157,0.2);
-            font-size: 0.75rem; font-weight: 600;
-            color: var(--accent-light);
+
+        /* META LIST */
+        .meta-list {
+            margin: 2rem 0 2.5rem;
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+        .meta-row {
+            display: flex; align-items: baseline; gap: 1.5rem;
+            padding: 0.85rem 0.25rem;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            transition: background 0.4s cubic-bezier(0.32,0.72,0,1);
+        }
+        .meta-row:hover { background: rgba(94,64,157,0.05); }
+        .meta-label {
+            flex: 0 0 140px;
+            font-size: 0.7rem; font-weight: 600;
+            letter-spacing: 0.14em; text-transform: uppercase;
+            color: var(--text-muted);
+        }
+        .meta-value {
+            font-size: 0.95rem; font-weight: 500;
+            color: #CECDC3; line-height: 1.4;
+        }
+        @media (max-width: 640px) {
+            .meta-label { flex-basis: 110px; }
         }
         footer {
             padding: 3rem; text-align: center;
@@ -238,7 +256,7 @@
             .nav-top { display: none; }
             .hamburger { display: flex; }
             .project-title { font-size: 2rem; }
-            .project-hero img { height: 300px; }
+            .project-hero img { height: auto; width: 100%; }
             .gallery-thumb { min-width: 90px; height: 60px; }
             .gallery-btn { width: 36px; font-size: 1rem; }
             .container { padding: 0 1.25rem; }
@@ -303,21 +321,39 @@
                 <div class="gallery" id="gallery"></div>
             </div>
             <div class="project-content reveal">
-                <h2>À propos du projet</h2>
-                <p>Hearthen NFT est un projet de jeu développé avec un moteur personnalisé. Il explore des mécaniques de jeu innovantes dans un univers riche et détaillé, avec un accent sur l'immersion et l'interactivité.</p>
-                <h2>Fonctionnalités clés</h2>
-                <ul>
-                    <li>Moteur de jeu personnalisé développé sur mesure</li>
-                    <li>Environnements ouverts et détaillés</li>
-                    <li>Système de physique avancé</li>
-                    <li>Optimisation des performances pour différentes plateformes</li>
-                </ul>
-                <h2>Technologies utilisées</h2>
-                <div class="tech-list">
-                    <span class="tech-tag">C++</span>
-                    <span class="tech-tag">OpenGL</span>
-                    <span class="tech-tag">GLSL</span>
-                    <span class="tech-tag">Blender</span>
+                <h2>Description</h2>
+                <p>Un jeu de cartes 2D inspiré du mode Champs de bataille de Hearthstone.</p>
+                <p>Le joueur dispose d'or et peut acheter, vendre et fusionner les cartes en sa possession,
+                    ainsi qu'améliorer le niveau de la boutique pour obtenir de meilleures cartes en vue du prochain combat contre une IA qui fera tout pour le vaincre.</p>
+                <div class="meta-list">
+                    <div class="meta-row">
+                        <div class="meta-label">Type de Projet</div>
+                        <div class="meta-value">auto battler</div>
+                    </div>
+                    <div class="meta-row">
+                        <div class="meta-label">Date</div>
+                        <div class="meta-value">2024</div>
+                    </div>
+                    <div class="meta-row">
+                        <div class="meta-label">Durée</div>
+                        <div class="meta-value">4 semaines</div>
+                    </div>
+                    <div class="meta-row">
+                        <div class="meta-label">Rôle</div>
+                        <div class="meta-value">UI, architecture</div>
+                    </div>
+                    <div class="meta-row">
+                        <div class="meta-label">Équipe</div>
+                        <div class="meta-value">3 programmer</div>
+                    </div>
+                    <div class="meta-row">
+                        <div class="meta-label">Langage & Moteur</div>
+                        <div class="meta-value">C++ / SFML</div>
+                    </div>
+                    <div class="meta-row">
+                        <div class="meta-label">Outils Externe</div>
+                        <div class="meta-value">Stable Diffusion</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -373,14 +409,6 @@
         const gallery = document.getElementById('gallery');
         let current = 0;
 
-        function applyHeroRatio(img) {
-            if (img.naturalWidth && img.naturalHeight) {
-                const ratio = (img.naturalWidth / img.naturalHeight).toFixed(4);
-                document.getElementById('mainImage').style.aspectRatio = ratio;
-            }
-        }
-        if (mainImg.complete) applyHeroRatio(mainImg);
-        else mainImg.addEventListener('load', () => applyHeroRatio(mainImg));
 
 
         function navigateTo(index) {

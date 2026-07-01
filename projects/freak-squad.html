@@ -145,9 +145,10 @@
             transition: opacity 0.5s cubic-bezier(0.32,0.72,0,1), transform 0.5s cubic-bezier(0.32,0.72,0,1);
             background: var(--surface-color);
             border: 1px solid rgba(255,255,255,0.06);
+            max-width: 720px; margin-left: auto; margin-right: auto;
         }
         .project-hero img {
-            width: 100%; height: 500px; object-fit: contain; display: block;
+            width: 100%; height: auto; display: block;
             background: var(--surface-color);
         }
         .image-nav {
@@ -161,16 +162,19 @@
         .image-nav:hover { background: rgba(0,0,0,0.15); }
         .image-nav.prev { left: 0; border-radius: 1.5rem 0 0 1.5rem; }
         .image-nav.next { right: 0; border-radius: 0 1.5rem 1.5rem 0; }
-        .gallery-container { position: relative; margin-bottom: 3rem; }
+        .gallery-container { position: relative; margin-bottom: 3rem; max-width: 800px; margin-left: auto; margin-right: auto; }
         .gallery {
             display: flex; gap: 12px;
-            overflow-x: auto; padding: 8px 0 4px;
+            overflow-x: auto; padding: 8px 4px 4px;
             scrollbar-width: none; justify-content: flex-start;
             cursor: grab; user-select: none;
             scroll-behavior: smooth;
+            scroll-snap-type: x mandatory;
+            scroll-padding: 0 4px;
         }
         .gallery::-webkit-scrollbar { display: none; }
         .gallery:active { cursor: grabbing; }
+        .gallery-thumb { scroll-snap-align: start; }
         .gallery-btn {
             position: absolute; top: 0; bottom: 0;
             width: 52px; z-index: 5;
@@ -215,14 +219,30 @@
         .project-content p { color: var(--text-muted); margin-bottom: 1rem; font-size: 1.05rem; }
         .project-content ul { color: var(--text-muted); margin: 1rem 0 1.5rem 1.5rem; }
         .project-content li { margin-bottom: 0.5rem; }
-        .tech-list { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 1.5rem; }
-        .tech-tag {
-            padding: 0.3rem 0.7rem;
-            border-radius: 9999px;
-            background: rgba(94,64,157,0.15);
-            border: 1px solid rgba(94,64,157,0.2);
-            font-size: 0.75rem; font-weight: 600;
-            color: var(--accent-light);
+        /* META LIST */
+        .meta-list {
+            margin: 2rem 0 2.5rem;
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+        .meta-row {
+            display: flex; align-items: baseline; gap: 1.5rem;
+            padding: 0.85rem 0.25rem;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            transition: background 0.4s cubic-bezier(0.32,0.72,0,1);
+        }
+        .meta-row:hover { background: rgba(94,64,157,0.05); }
+        .meta-label {
+            flex: 0 0 140px;
+            font-size: 0.7rem; font-weight: 600;
+            letter-spacing: 0.14em; text-transform: uppercase;
+            color: var(--text-muted);
+        }
+        .meta-value {
+            font-size: 0.95rem; font-weight: 500;
+            color: #CECDC3; line-height: 1.4;
+        }
+        @media (max-width: 640px) {
+            .meta-label { flex-basis: 110px; }
         }
         footer {
             padding: 3rem; text-align: center;
@@ -235,7 +255,7 @@
             .nav-top { display: none; }
             .hamburger { display: flex; }
             .project-title { font-size: 2rem; }
-            .project-hero img { height: 300px; }
+            .project-hero img { height: auto; width: 100%; }
             .gallery-thumb { min-width: 90px; height: 60px; }
             .gallery-btn { width: 36px; font-size: 1rem; }
             .container { padding: 0 1.25rem; }
@@ -301,19 +321,37 @@
             </div>
             <div class="project-content reveal">
                 <h2>À propos du projet</h2>
-                <p>FreakSquad est un jeu d'action dynamique mettant en scène une équipe de personnages atypiques aux capacités uniques. Le joueur doit composer son équipe et affronter des vagues d'ennemis dans des environnements variés.</p>
-                <h2>Fonctionnalités clés</h2>
-                <ul>
-                    <li>Système de combat en équipe avec des personnages aux compétences variées</li>
-                    <li>Progression et déblocage de nouveaux personnages</li>
-                    <li>Environnements destructibles et interactifs</li>
-                    <li>Mode multijoueur local</li>
-                </ul>
-                <h2>Technologies utilisées</h2>
-                <div class="tech-list">
-                    <span class="tech-tag">Unity</span>
-                    <span class="tech-tag">C#</span>
-                    <span class="tech-tag">Photoshop</span>
+                <p>FreakSquad est un Beat Them Up 2D inspiré de jeux retro comme street of rage.
+                    Le joueur doit parcourir une ville en affrontant les mutants qui l'ont envahi tout en faisant un maximum de score grâce au système de combo.</p>
+                <div class="meta-list">
+                    <div class="meta-row">
+                        <div class="meta-label">Type de Projet</div>
+                        <div class="meta-value">2D Beat Them Up</div>
+                    </div>
+                    <div class="meta-row">
+                        <div class="meta-label">Date</div>
+                        <div class="meta-value">2023</div>
+                    </div>
+                    <div class="meta-row">
+                        <div class="meta-label">Durée</div>
+                        <div class="meta-value">6 semaines</div>
+                    </div>
+                    <div class="meta-row">
+                        <div class="meta-label">Rôle</div>
+                        <div class="meta-value">Lead Programmer, Ui & Gameplay Programmer</div>
+                    </div>
+                    <div class="meta-row">
+                        <div class="meta-label">Équipe</div>
+                        <div class="meta-value">13 Programmers and 14 Game Artists</div>
+                    </div>
+                    <div class="meta-row">
+                        <div class="meta-label">Langage & Moteur</div>
+                        <div class="meta-value">C++ / SFML Library</div>
+                    </div>
+                    <div class="meta-row">
+                        <div class="meta-label">Outils Externe</div>
+                        <div class="meta-value">-</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -368,7 +406,9 @@
             if (index >= screenshots.length) index = 0;
             if (index === current) return;
             document.querySelector('.gallery-thumb.active').classList.remove('active');
-            gallery.children[index].classList.add('active');
+            const thumb = gallery.children[index];
+            thumb.classList.add('active');
+            thumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
             mainImg.style.opacity = '0';
             mainImg.style.transform = 'scale(0.95)';
             setTimeout(() => {
@@ -409,13 +449,25 @@
             if (Math.abs(walk) > 5) gallery.didDrag = true;
         });
 
-        // Gallery arrow buttons
-        const thumbStyle = getComputedStyle(document.querySelector('.gallery-thumb'));
-        const thumbWidth = parseInt(thumbStyle.minWidth);
-        const thumbGap = 12;
-        const galleryScrollAmount = thumbWidth + thumbGap;
-        document.getElementById('galleryPrevBtn').addEventListener('click', () => { gallery.scrollBy({ left: -galleryScrollAmount, behavior: 'smooth' }); });
-        document.getElementById('galleryNextBtn').addEventListener('click', () => { gallery.scrollBy({ left: galleryScrollAmount, behavior: 'smooth' }); });
+        // Gallery arrow buttons — scroll by full thumbs, snapping to nearest image
+        const scrollStep = () => {
+            const t = gallery.querySelector('.gallery-thumb');
+            if (!t) return 0;
+            const style = getComputedStyle(t);
+            const w = t.getBoundingClientRect().width + parseInt(style.marginRight || 0) + 12;
+            return w;
+        };
+        const visibleCount = () => {
+            const step = scrollStep();
+            return step ? Math.max(1, Math.floor(gallery.clientWidth / step)) : 1;
+        };
+        const snapScroll = (dir) => {
+            const step = scrollStep();
+            if (!step) return;
+            gallery.scrollBy({ left: dir * step * visibleCount(), behavior: 'smooth' });
+        };
+        document.getElementById('galleryPrevBtn').addEventListener('click', () => snapScroll(-1));
+        document.getElementById('galleryNextBtn').addEventListener('click', () => snapScroll(1));
 
         if (gallery.scrollWidth <= gallery.clientWidth) { gallery.style.justifyContent = 'center'; }
     </script>
