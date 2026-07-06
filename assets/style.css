@@ -1,0 +1,59 @@
+/* ==== GLOBAL RESET & BASE ==== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+    background-color: #100F0F;
+    color: #CECDC3;
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ==== FILM GRAIN OVERLAY ==== */
+body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    pointer-events: none;
+    opacity: 0.028;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ==== RADIAL ORB GRADIENTS ==== */
+.orb { position: fixed; border-radius: 50%; filter: blur(140px); z-index: -1; pointer-events: none; }
+.orb-1 { width: 700px; height: 700px; top: -15%; right: -10%; background: radial-gradient(circle, rgba(94,64,157,0.12) 0%, transparent 70%); animation: blobDrift 25s ease-in-out infinite; }
+.orb-2 { width: 600px; height: 600px; bottom: -12%; left: -8%; background: radial-gradient(circle, rgba(36,131,123,0.09) 0%, transparent 70%); animation: blobDrift 28s ease-in-out infinite reverse; }
+.orb-3 { width: 500px; height: 500px; top: 50%; left: 50%; transform: translate(-50%, -50%); background: radial-gradient(circle, rgba(94,64,157,0.06) 0%, transparent 70%); animation: blobDrift 22s ease-in-out infinite; }
+@keyframes blobDrift {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(30px, -50px) scale(1.1); }
+    66% { transform: translate(-20px, 20px) scale(0.9); }
+}
+
+/* ==== NAVIGATION — TOP-RIGHT TEXT ==== */
+.nav-top { position: fixed; top: 1.5rem; right: 1.5rem; z-index: 100; display: flex; align-items: center; gap: 2rem; }
+.nav-top a { color: rgba(255,255,255,0.45); text-decoration: none; font-size: 0.825rem; font-weight: 500; letter-spacing: 0.02em; transition: color 0.5s cubic-bezier(0.32,0.72,0,1); }
+.nav-top a:hover { color: #fff; }
+.nav-top .nav-active { color: #fff; font-weight: 600; }
+
+/* ==== HAMBURGER ==== */
+.hamburger { display: none; width: 36px; height: 36px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 50%; cursor: pointer; position: fixed; top: 1.5rem; right: 1.5rem; z-index: 200; align-items: center; justify-content: center; transition: all 0.7s cubic-bezier(0.32,0.72,0,1); }
+.hamburger:hover { border-color: rgba(94,64,157,0.4); }
+.hamburger-line { position: absolute; width: 16px; height: 1.5px; background: #fff; border-radius: 1px; transition: all 0.5s cubic-bezier(0.32,0.72,0,1); }
+.hamburger-line:nth-child(1) { transform: translateY(-4px); }
+.hamburger-line:nth-child(2) { transform: translateY(4px); }
+.hamburger.open .hamburger-line:nth-child(1) { transform: translateY(0) rotate(45deg); }
+.hamburger.open .hamburger-line:nth-child(2) { transform: translateY(0) rotate(-45deg); }
+
+/* ==== MOBILE MENU OVERLAY ==== */
+.menu-overlay { position: fixed; inset: 0; z-index: 150; background: rgba(5,5,5,0.92); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2.5rem; opacity: 0; pointer-events: none; transition: opacity 0.7s cubic-bezier(0.32,0.72,0,1); }
+.menu-overlay.open { opacity: 1; pointer-events: auto; }
+.menu-link { font-size: 2rem; font-weight: 700; color: rgba(255,255,255,0.5); text-decoration: none; transform: translateY(48px); opacity: 0; transition: all 0.7s cubic-bezier(0.32,0.72,0,1); }
+.menu-overlay.open .menu-link:nth-child(1) { transition-delay: 0.1s; transform: translateY(0); opacity: 1; }
+.menu-overlay.open .menu-link:nth-child(2) { transition-delay: 0.15s; transform: translateY(0); opacity: 1; }
+.menu-overlay.open .menu-link:nth-child(3) { transition-delay: 0.2s; transform: translateY(0); opacity: 1; }
+
+/* ==== SCROLL REVEAL ==== */
+.reveal { opacity: 0; transform: translateY(40px); filter: blur(8px); transition: all 0.9s cubic-bezier(0.32,0.72,0,1); }
+.reveal.visible { opacity: 1; transform: translateY(0); filter: blur(0); }

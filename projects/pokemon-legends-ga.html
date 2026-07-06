@@ -1,10 +1,19 @@
 ﻿<!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pokémon Legends GA — Gauthier Lefebvre</title>
-    <meta name="description" content="Pokémon Legends GA, projet Pokémon fan-made RPG Maker par Gauthier Lefebvre.">
+    <meta name="description" content="Pokémon Legends GA, a fan-made Pokémon RPG Maker project by Gauthier Lefebvre.">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23100F0F'/%3E%3Crect x='24' y='24' width='52' height='52' rx='12' fill='%235E409D'/%3E%3Ctext x='50' y='68' font-size='42' font-family='sans-serif' font-weight='700' text-anchor='middle' fill='white'%3EG%3C/text%3E%3C/svg%3E">
+    <meta name="theme-color" content="#100F0F">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Pokémon Legends GA — Gauthier Lefebvre">
+    <meta property="og:description" content="Pokémon Legends GA, a fan-made Pokémon RPG Maker project by Gauthier Lefebvre.">
+    <meta property="og:image" content="../Images/pokemonLegendsGA/PGA-1.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Pokémon Legends GA — Gauthier Lefebvre">
+    <meta name="twitter:description" content="Pokémon Legends GA, a fan-made Pokémon RPG Maker project by Gauthier Lefebvre.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -19,6 +28,7 @@
         }
       }
     </script>
+    <link rel="stylesheet" href="../assets/style.css">
     <style>
         :root {
             view-transition-name: project-page;
@@ -30,100 +40,7 @@
             --border: rgba(94,64,157,0.2);
         }
 
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        html { scroll-behavior: smooth; }
-        body {
-            background-color: #100F0F;
-            color: #CECDC3;
-            font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
-            line-height: 1.6;
-            -webkit-font-smoothing: antialiased;
-            min-height: 100vh;
-        }
-
-        /* FILM GRAIN OVERLAY */
-        body::after {
-            content: '';
-            position: fixed;
-            inset: 0;
-            z-index: 50;
-            pointer-events: none;
-            opacity: 0.028;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-        }
-
-        /* RADIAL ORBS */
-        .orb { position: fixed; border-radius: 50%; filter: blur(140px); z-index: -1; pointer-events: none; }
-        .orb-1 { width: 700px; height: 700px; top: -15%; right: -10%; background: radial-gradient(circle, rgba(94,64,157,0.12) 0%, transparent 70%); animation: blobDrift 25s ease-in-out infinite; }
-        .orb-2 { width: 600px; height: 600px; bottom: -12%; left: -8%; background: radial-gradient(circle, rgba(36,131,123,0.09) 0%, transparent 70%); animation: blobDrift 28s ease-in-out infinite reverse; }
-        .orb-3 { width: 500px; height: 500px; top: 50%; left: 50%; transform: translate(-50%, -50%); background: radial-gradient(circle, rgba(94,64,157,0.06) 0%, transparent 70%); animation: blobDrift 22s ease-in-out infinite; }
-        @keyframes blobDrift {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            33% { transform: translate(30px, -50px) scale(1.1); }
-            66% { transform: translate(-20px, 20px) scale(0.9); }
-        }
-
-        /* TOP-RIGHT NAV */
-        .nav-top {
-            position: fixed; top: 1.5rem; right: 1.5rem; z-index: 100;
-            display: flex; align-items: center; gap: 2rem;
-        }
-        .nav-top a {
-            color: rgba(255,255,255,0.45);
-            text-decoration: none;
-            font-size: 0.825rem; font-weight: 500; letter-spacing: 0.02em;
-            transition: color 0.5s cubic-bezier(0.32,0.72,0,1);
-        }
-        .nav-top a:hover { color: #fff; }
-        .nav-top .nav-active { color: #fff; font-weight: 600; }
-
-        /* HAMBURGER */
-        .hamburger {
-            display: none;
-            width: 36px; height: 36px;
-            background: rgba(255,255,255,0.06);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 50%;
-            cursor: pointer;
-            position: fixed; top: 1.5rem; right: 1.5rem; z-index: 200;
-            align-items: center; justify-content: center;
-            transition: all 0.7s cubic-bezier(0.32,0.72,0,1);
-        }
-        .hamburger:hover { border-color: rgba(94,64,157,0.4); }
-        .hamburger-line {
-            position: absolute; width: 16px; height: 1.5px; background: #fff;
-            border-radius: 1px; transition: all 0.5s cubic-bezier(0.32,0.72,0,1);
-        }
-        .hamburger-line:nth-child(1) { transform: translateY(-4px); }
-        .hamburger-line:nth-child(2) { transform: translateY(4px); }
-        .hamburger.open .hamburger-line:nth-child(1) { transform: translateY(0) rotate(45deg); }
-        .hamburger.open .hamburger-line:nth-child(2) { transform: translateY(0) rotate(-45deg); }
-
-        /* MOBILE MENU OVERLAY */
-        .menu-overlay {
-            position: fixed; inset: 0; z-index: 150;
-            background: rgba(5,5,5,0.92);
-            backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center; gap: 2.5rem;
-            opacity: 0; pointer-events: none;
-            transition: opacity 0.7s cubic-bezier(0.32,0.72,0,1);
-        }
-        .menu-overlay.open { opacity: 1; pointer-events: auto; }
-        .menu-link {
-            font-size: 2rem; font-weight: 700;
-            color: rgba(255,255,255,0.5);
-            text-decoration: none;
-            transform: translateY(48px); opacity: 0;
-            transition: all 0.7s cubic-bezier(0.32,0.72,0,1);
-        }
-        .menu-overlay.open .menu-link:nth-child(1) { transition-delay: 0.1s; transform: translateY(0); opacity: 1; }
-        .menu-overlay.open .menu-link:nth-child(2) { transition-delay: 0.15s; transform: translateY(0); opacity: 1; }
-        .menu-overlay.open .menu-link:nth-child(3) { transition-delay: 0.2s; transform: translateY(0); opacity: 1; }
-
-        /* SCROLL REVEAL */
-        .reveal { opacity: 0; transform: translateY(40px); filter: blur(8px); transition: all 0.9s cubic-bezier(0.32,0.72,0,1); }
-        .reveal.visible { opacity: 1; transform: translateY(0); filter: blur(0); }
+        body { min-height: 100vh; }
 
         /* ==== PROJECT PAGE ==== */
         .container { max-width: 900px; margin: 0 auto; padding: 0 2rem; }
@@ -286,47 +203,46 @@
     <div class="orb orb-3"></div>
 
     <!-- HAMBURGER (mobile only) -->
-    <button class="hamburger" id="hamburger" aria-label="Menu">
+    <button class="hamburger" id="hamburger" aria-label="Menu" aria-expanded="false" aria-controls="menuOverlay">
         <span class="hamburger-line"></span>
         <span class="hamburger-line"></span>
     </button>
 
     <!-- MOBILE MENU OVERLAY -->
     <nav class="menu-overlay" id="menuOverlay">
-        <a href="../index.html" class="menu-link" onclick="closeMenu()">Accueil</a>
-        <a href="../index.html#projets" class="menu-link" onclick="closeMenu()">Projets</a>
-        <a href="https://github.com/GauthierLefebvre" target="_blank" class="menu-link" onclick="closeMenu()">GitHub ↗</a>
+        <a href="../index.html" class="menu-link">Home</a>
+        <a href="../index.html#projets" class="menu-link">Projects</a>
     </nav>
 
     <!-- TOP-RIGHT NAV (desktop) -->
     <nav class="nav-top" id="navTop">
-        <a href="../index.html">Accueil</a>
-        <a href="../index.html#projets" class="nav-active">Projets</a>
-        <a href="https://github.com/GauthierLefebvre" target="_blank">GitHub ↗</a>
+        <a href="../index.html">Home</a>
+        <a href="../index.html#projets" class="nav-active">Projects</a>
     </nav>
 
     <main>
         <div class="container">
-            <a href="../index.html#projets" class="back-link">← Retour aux projets</a>
+            <a href="../index.html#projets" class="back-link">← Back to projects</a>
             <h1 class="project-title reveal">Pokémon Legends GA</h1>
             <div class="project-hero reveal" id="mainImage">
-                <button class="image-nav prev" id="prevBtn" aria-label="Image précédente">←</button>
+                <button class="image-nav prev" id="prevBtn" aria-label="Previous image">←</button>
                 <img id="mainImg" src="../Images/pokemonLegendsGA/PGA-1.png" alt="Pokémon Legends GA">
-                <button class="image-nav next" id="nextBtn" aria-label="Image suivante">→</button>
+                <button class="image-nav next" id="nextBtn" aria-label="Next image">→</button>
             </div>
             <div class="gallery-container reveal">
-                <button class="gallery-btn prev" id="galleryPrevBtn" aria-label="Images précédentes">‹</button>
-                <button class="gallery-btn next" id="galleryNextBtn" aria-label="Images suivantes">›</button>
+                <button class="gallery-btn prev" id="galleryPrevBtn" aria-label="Previous images">‹</button>
+                <button class="gallery-btn next" id="galleryNextBtn" aria-label="Next images">›</button>
                 <div class="gallery" id="gallery"></div>
             </div>
             <div class="project-content reveal">
-                <h2>À propos du projet</h2>
-                <p>Un projet 3D inspiré de <strong>Légendes Pokémon : Arceus</strong> et développé sous Unreal Engine 5.
-                    Les joueurs peuvent capturer, faire combattre et faire évoluer leurs Pokémon dans un monde ouvert,
-                    en profitant de systèmes de capture et de combat calqués sur ceux de <strong>Légendes Pokémon : Arceus</strong>.</p>
+                <h2>About the project</h2>
+                <p>A 3D project inspired by <strong>Pokémon Legends: Arceus</strong> and developed with Unreal Engine 5.
+                    Players can catch, battle and evolve their Pokémon in an open world,
+                    using catching and combat systems modeled after those in <strong>Pokémon Legends: Arceus</strong>.</p>
+                    <p><a href="https://github.com/GauthierLefebvre/PokemonLegendsGA" style="color: #5E409D;">Link to the project's GitHub</a></p>
                 <div class="meta-list">
                     <div class="meta-row">
-                        <div class="meta-label">Type de Projet</div>
+                        <div class="meta-label">Project Type</div>
                         <div class="meta-value">RPG</div>
                     </div>
                     <div class="meta-row">
@@ -334,23 +250,23 @@
                         <div class="meta-value">2025</div>
                     </div>
                     <div class="meta-row">
-                        <div class="meta-label">Durée</div>
-                        <div class="meta-value">5 semaines</div>
+                        <div class="meta-label">Duration</div>
+                        <div class="meta-value">5 weeks</div>
                     </div>
                     <div class="meta-row">
-                        <div class="meta-label">Rôle</div>
+                        <div class="meta-label">Role</div>
                         <div class="meta-value">Gameplay Programmer</div>
                     </div>
                     <div class="meta-row">
-                        <div class="meta-label">Équipe</div>
+                        <div class="meta-label">Team</div>
                         <div class="meta-value">12 Programmers</div>
                     </div>
                     <div class="meta-row">
-                        <div class="meta-label">Langage & Moteur</div>
+                        <div class="meta-label">Language & Engine</div>
                         <div class="meta-value">C++ / Unreal Engine</div>
                     </div>
                     <div class="meta-row">
-                        <div class="meta-label">Outils Externe</div>
+                        <div class="meta-label">External Tools</div>
                         <div class="meta-value">-</div>
                     </div>
                 </div>
@@ -360,38 +276,6 @@
     </main>
 
     <script>
-        // ==== HAMBURGER MENU ====
-        const hamburger = document.getElementById('hamburger');
-        const menuOverlay = document.getElementById('menuOverlay');
-        let menuOpen = false;
-        hamburger.addEventListener('click', (e) => {
-            e.stopPropagation();
-            menuOpen = !menuOpen;
-            hamburger.classList.toggle('open', menuOpen);
-            menuOverlay.classList.toggle('open', menuOpen);
-            document.body.style.overflow = menuOpen ? 'hidden' : '';
-        });
-        function closeMenu() {
-            menuOpen = false;
-            hamburger.classList.remove('open');
-            menuOverlay.classList.remove('open');
-            document.body.style.overflow = '';
-        }
-        menuOverlay.addEventListener('click', (e) => { if (e.target === menuOverlay) closeMenu(); });
-        document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && menuOpen) closeMenu(); });
-
-        // ==== SCROLL REVEAL ====
-        const revealEls = document.querySelectorAll('.reveal');
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); }
-            });
-        }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-        revealEls.forEach(el => observer.observe(el));
-
-        // ==== YEAR ====
-        document.getElementById('year').textContent = new Date().getFullYear();
-
         // ==== GALLERY ====
         const screenshots = [            { image: "../Images/pokemonLegendsGA/PGA-1.png", label: "PGA-1" },
             { image: "../Images/pokemonLegendsGA/PGA-2.png", label: "PGA-2" },
@@ -476,5 +360,6 @@
 
         if (gallery.scrollWidth <= gallery.clientWidth) { gallery.style.justifyContent = 'center'; }
     </script>
+    <script src="../assets/main.js"></script>
 </body>
 </html>
