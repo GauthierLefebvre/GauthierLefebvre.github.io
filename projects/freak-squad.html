@@ -72,8 +72,8 @@
             position: absolute; top: 0; bottom: 0;
             width: 80px; z-index: 2; cursor: pointer; border: none;
             display: flex; align-items: center; justify-content: center;
-            font-size: 1.5rem; color: #fff; background: transparent;
-            text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+            font-size: 1.6rem; color: #fff; background: transparent;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.9), 0 2px 10px rgba(0,0,0,0.6);
             transition: background 0.5s cubic-bezier(0.32,0.72,0,1);
         }
         .image-nav:hover { background: rgba(0,0,0,0.15); }
@@ -297,6 +297,12 @@
             thumb.addEventListener('click', () => { if (gallery.didDrag) return; navigateTo(i); });
             gallery.appendChild(thumb);
         });
+
+        // Hide hero arrows and gallery when there is nothing to navigate
+        if (screenshots.length <= 1) {
+            ['prevBtn', 'nextBtn'].forEach(id => document.getElementById(id).style.display = 'none');
+            document.querySelector('.gallery-container').style.display = 'none';
+        }
 
         document.getElementById('prevBtn').addEventListener('click', () => navigateTo(current - 1));
         document.getElementById('nextBtn').addEventListener('click', () => navigateTo(current + 1));
