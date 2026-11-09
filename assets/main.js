@@ -22,7 +22,6 @@
     const yearEl = document.getElementById('year');
     if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-    const root = document.getElementById('snapContainer') || null;
     const revealEls = document.querySelectorAll('.reveal, [data-reveal]');
     if (revealEls.length) {
         const observer = new IntersectionObserver((entries) => {
@@ -32,7 +31,7 @@
                     observer.unobserve(entry.target);
                 }
             });
-        }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px', root });
+        }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
         revealEls.forEach(el => observer.observe(el));
     }
 
@@ -42,14 +41,16 @@
 
     // Entrance: the direction is set on <html> by the inline head script,
     // before first paint, so the page never flashes at its final position.
-    if (docEl.hasAttribute('data-nav')) {
-        const clearNav = () => docEl.removeAttribute('data-nav');
-        document.body.addEventListener('animationend', (e) => {
-            if (e.target === document.body) clearNav();
-        });
-        window.setTimeout(clearNav, 1200);
-        if (reduceMotion) clearNav();
-    }
+    // The attribute is kept: the project pages use it to stagger their content.
+    if (reduceMotion) docEl.removeAttribute('data-nav');
+
+    // A page left mid-exit can be restored from the bfcache: reset it.
+    window.addEventListener('pageshow', (e) => {
+        if (e.persisted) {
+            docEl.removeAttribute('data-nav-out');
+            docEl.removeAttribute('data-nav');
+        }
+    });
 
     const isHome = (path) => /\/index\.html?$/i.test(path) || /\/$/.test(path);
 

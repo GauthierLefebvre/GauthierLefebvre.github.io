@@ -1,6 +1,5 @@
 /* ==== GLOBAL RESET & BASE ==== */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
 body {
     background-color: #100F0F;
     color: #CECDC3;
@@ -50,22 +49,73 @@ body::after {
 /* ==== PAGE SWIPE TRANSITION ====
    The direction is written on <html> by the head script (data-nav) and by
    assets/main.js (data-nav-out). Both pages share these keyframes. */
-@keyframes swipeInFromLeft  { from { transform: translateX(-100%); } to { transform: translateX(0); } }
-@keyframes swipeInFromRight { from { transform: translateX(100%); }  to { transform: translateX(0); } }
-@keyframes swipeOutToRight  { from { transform: translateX(0); } to { transform: translateX(100%); } }
-@keyframes swipeOutToLeft   { from { transform: translateX(0); } to { transform: translateX(-100%); } }
+@keyframes swipeInFromLeft {
+    from { transform: translateX(-100%); }
+    to   { transform: translateX(0); }
+}
+@keyframes swipeInFromRight {
+    from { transform: translateX(100%); }
+    to   { transform: translateX(0); }
+}
+@keyframes swipeOutToRight {
+    from { transform: translateX(0); }
+    to   { transform: translateX(100%); }
+}
+@keyframes swipeOutToLeft {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-100%); }
+}
 
 html { background-color: #100F0F; }
 
-html[data-nav="forward"] body { animation: swipeInFromRight 0.5s cubic-bezier(0.32,0.72,0,1) backwards; }
-html[data-nav="back"] body    { animation: swipeInFromLeft  0.5s cubic-bezier(0.32,0.72,0,1) backwards; }
+html[data-nav="forward"] body { animation: swipeInFromRight 0.55s cubic-bezier(0.16,1,0.3,1) backwards; }
+html[data-nav="back"] body    { animation: swipeInFromLeft  0.55s cubic-bezier(0.16,1,0.3,1) backwards; }
 
-html[data-nav-out="forward"] body { animation: swipeOutToLeft  0.35s cubic-bezier(0.55,0,0.7,0.2) both; }
-html[data-nav-out="back"] body    { animation: swipeOutToRight 0.35s cubic-bezier(0.55,0,0.7,0.2) both; }
+html[data-nav-out="forward"] body { animation: swipeOutToLeft  0.3s cubic-bezier(0.55,0,0.7,0.2) both; }
+html[data-nav-out="back"] body    { animation: swipeOutToRight 0.3s cubic-bezier(0.55,0,0.7,0.2) both; }
 
 html[data-nav], html[data-nav-out] { overflow-x: hidden; }
+
+/* Staggered entrance for project pages: the content settles after the swipe. */
+@keyframes projectItemIn {
+    from { opacity: 0; transform: translateY(26px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+/* The last block only fades: moving it would change the page height
+   mid-animation and make the browser scrollbar jump. */
+@keyframes projectItemFade {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+html[data-nav] .back-link,
+html[data-nav] .project-title,
+html[data-nav] .project-hero,
+html[data-nav] .gallery-container {
+    animation: projectItemIn 0.7s cubic-bezier(0.16,1,0.3,1) both;
+}
+html[data-nav] .project-content {
+    animation: projectItemFade 0.7s cubic-bezier(0.16,1,0.3,1) both;
+}
+/* Those blocks are handled by the swipe animation: don't also run the
+   scroll-reveal transition (its blur is expensive and looks muddy mid-swipe). */
+html[data-nav] .project-title,
+html[data-nav] .project-hero,
+html[data-nav] .gallery-container {
+    filter: none;
+    transition: none;
+}
+html[data-nav] .back-link         { animation-delay: 0.10s; }
+html[data-nav] .project-title     { animation-delay: 0.17s; }
+html[data-nav] .project-hero      { animation-delay: 0.24s; }
+html[data-nav] .gallery-container { animation-delay: 0.33s; }
+html[data-nav] .project-content   { animation-delay: 0.44s; }
 
 @media (prefers-reduced-motion: reduce) {
     html[data-nav] body,
     html[data-nav-out] body { animation: none; }
+    html[data-nav] .back-link,
+    html[data-nav] .project-title,
+    html[data-nav] .project-hero,
+    html[data-nav] .gallery-container,
+    html[data-nav] .project-content { animation: none; }
 }

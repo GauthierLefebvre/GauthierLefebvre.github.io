@@ -58,15 +58,19 @@
     </script>
     <link rel="stylesheet" href="assets/style.css">
     <style>
-        html, body { height: 100%; overflow: hidden; }
-
-        /* ==== SNAP CONTAINER ==== */
-        .snap-container {
-            height: 100vh;
-            overflow-y: scroll;
-            -webkit-overflow-scrolling: touch;
+        /* The document is the scroller: the native scrollbar belongs to the
+           viewport, so it stays put while the page slides in the swipe. */
+        html {
+            min-height: 100%;
             scroll-snap-type: y mandatory;
         }
+        body {
+            min-height: 100%;
+            overflow-x: hidden;
+        }
+
+        /* ==== SNAP CONTAINER ==== */
+        .snap-container { display: block; }
         .snap-section {
             height: 100dvh;
             min-height: 100dvh;
@@ -576,12 +580,7 @@
     </div>
 
     <script>
-        // ==== REFS ====
-        const container = document.getElementById('snapContainer');
-        const hero = document.getElementById('hero');
-        const projets = document.getElementById('projets');
-
-        // ==== SMOOTH SNAP NAVIGATION (arrow + nav links) ====
+        // ==== SMOOTH SNAP NAVIGATION ====
         document.querySelectorAll('a[href^="#hero"], a[href^="#projets"]').forEach(link => {
             link.addEventListener('click', (e) => {
                 const id = link.getAttribute('href');
