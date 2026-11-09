@@ -46,3 +46,26 @@ body::after {
 /* ==== SCROLL REVEAL ==== */
 .reveal { opacity: 0; transform: translateY(40px); filter: blur(8px); transition: all 0.9s cubic-bezier(0.32,0.72,0,1); }
 .reveal.visible { opacity: 1; transform: translateY(0); filter: blur(0); }
+
+/* ==== PAGE SWIPE TRANSITION ====
+   The direction is written on <html> by the head script (data-nav) and by
+   assets/main.js (data-nav-out). Both pages share these keyframes. */
+@keyframes swipeInFromLeft  { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+@keyframes swipeInFromRight { from { transform: translateX(100%); }  to { transform: translateX(0); } }
+@keyframes swipeOutToRight  { from { transform: translateX(0); } to { transform: translateX(100%); } }
+@keyframes swipeOutToLeft   { from { transform: translateX(0); } to { transform: translateX(-100%); } }
+
+html { background-color: #100F0F; }
+
+html[data-nav="forward"] body { animation: swipeInFromRight 0.5s cubic-bezier(0.32,0.72,0,1) backwards; }
+html[data-nav="back"] body    { animation: swipeInFromLeft  0.5s cubic-bezier(0.32,0.72,0,1) backwards; }
+
+html[data-nav-out="forward"] body { animation: swipeOutToLeft  0.35s cubic-bezier(0.55,0,0.7,0.2) both; }
+html[data-nav-out="back"] body    { animation: swipeOutToRight 0.35s cubic-bezier(0.55,0,0.7,0.2) both; }
+
+html[data-nav], html[data-nav-out] { overflow-x: hidden; }
+
+@media (prefers-reduced-motion: reduce) {
+    html[data-nav] body,
+    html[data-nav-out] body { animation: none; }
+}

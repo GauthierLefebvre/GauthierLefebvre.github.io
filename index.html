@@ -2,6 +2,18 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <script>
+      // Page swipe: set the direction before first paint to avoid a flash.
+      (function () {
+        try {
+          var d = sessionStorage.getItem('navSwipe');
+          if (d) {
+            document.documentElement.setAttribute('data-nav', d);
+            sessionStorage.removeItem('navSwipe');
+          }
+        } catch (e) {}
+      })();
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gauthier Lefebvre — Game Developer Portfolio</title>
     <meta name="description" content="Portfolio of Gauthier Lefebvre, Unity / Unreal Engine game developer.">
@@ -187,7 +199,7 @@
         /* ==== HERO — WORK FIRST ==== */
         #hero.hero-work {
             height: 100dvh;
-            padding: 76px 2rem 2rem;
+            padding: 2rem;
             justify-content: flex-start;
         }
         .hw-grid {
@@ -306,8 +318,6 @@
 
         /* ==== RESPONSIVE ==== */
         @media (max-width: 768px) {
-            .nav-top { display: none; }
-            .hamburger { display: flex; }
             .snap-section { padding: 60px 1rem; }
             #projets.snap-section {
                 height: auto;
@@ -326,7 +336,7 @@
             #hero.hero-work {
                 height: auto;
                 min-height: 100dvh;
-                padding: 76px 1rem 2rem;
+                padding: 1.5rem 1rem 2rem;
                 justify-content: flex-start;
             }
             .hw-grid {
@@ -354,24 +364,6 @@
     </style>
 </head>
 <body>
-
-    <!-- HAMBURGER (mobile only) -->
-    <button class="hamburger" id="hamburger" aria-label="Menu" aria-expanded="false" aria-controls="menuOverlay">
-        <span class="hamburger-line"></span>
-        <span class="hamburger-line"></span>
-    </button>
-
-    <!-- MOBILE MENU OVERLAY -->
-    <nav class="menu-overlay" id="menuOverlay">
-        <a href="#hero" class="menu-link">Home</a>
-        <a href="#projets" class="menu-link">Projects</a>
-    </nav>
-
-    <!-- TOP-RIGHT NAV (desktop) -->
-    <nav class="nav-top" id="navTop">
-        <a href="#hero" class="nav-active">Home</a>
-        <a href="#projets">Projects</a>
-    </nav>
 
     <!-- ======== SNAP CONTAINER ======== -->
     <div class="snap-container" id="snapContainer">
@@ -600,28 +592,6 @@
                 target.scrollIntoView({ behavior: 'smooth' });
             });
         });
-
-        // ==== NAV ACTIVE LINK DETECTION ====
-        const navLinks = document.querySelectorAll('.nav-top a[href^="#"]');
-        const sections = [hero, projets];
-
-        function updateActiveNav() {
-            const scrollTop = container.scrollTop;
-            let current = '';
-            sections.forEach(section => {
-                const offset = section.offsetTop;
-                const height = section.offsetHeight;
-                if (scrollTop >= offset - height * 0.3) {
-                    current = '#' + section.getAttribute('id');
-                }
-            });
-            navLinks.forEach(link => {
-                link.classList.toggle('nav-active', link.getAttribute('href') === current);
-            });
-        }
-
-        container.addEventListener('scroll', updateActiveNav, { passive: true });
-        updateActiveNav();
     </script>
     <script src="assets/main.js"></script>
 </body>

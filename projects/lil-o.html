@@ -2,6 +2,18 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <script>
+      // Page swipe: set the direction before first paint to avoid a flash.
+      (function () {
+        try {
+          var d = sessionStorage.getItem('navSwipe');
+          if (d) {
+            document.documentElement.setAttribute('data-nav', d);
+            sessionStorage.removeItem('navSwipe');
+          }
+        } catch (e) {}
+      })();
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lil_o — Gauthier Lefebvre</title>
     <meta name="description" content="Lil_o, a lightweight utility app in HTML/CSS/JavaScript by Gauthier Lefebvre.">

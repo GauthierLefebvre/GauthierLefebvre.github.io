@@ -35,4 +35,53 @@
         }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px', root });
         revealEls.forEach(el => observer.observe(el));
     }
+
+    // ==== PAGE SWIPE TRANSITION ====
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const docEl = document.documentElement;
+
+    // Entrance: the direction is set on <html> by the inline head script,
+    // before first paint, so the page never flashes at its final position.
+    if (docEl.hasAttribute('data-nav')) {
+        const clearNav = () => docEl.removeAttribute('data-nav');
+        document.body.addEventListener('animationend', (e) => {
+            if (e.target === document.body) clearNav();
+        });
+        window.setTimeout(clearNav, 1200);
+        if (reduceMotion) clearNav();
+    }
+
+    const isHome = (path) => /\/index\.html?$/i.test(path) || /\/$/.test(path);
+
+    let leaving = false;
+    document.addEventListener('click', (e) => {
+        if (leaving || reduceMotion) return;
+        if (e.defaultPrevented || e.button !== 0) return;
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+
+        const link = e.target.closest('a[href]');
+        if (!link) return;
+        if (link.target && link.target !== '_self') return;
+        if (link.hasAttribute('download')) return;
+
+        let url;
+        try { url = new URL(link.href, location.href); } catch (err) { return; }
+        if (url.origin !== location.origin) return;
+        if (url.pathname === location.pathname && url.search === location.search) return;
+        if (!/\.html?$/i.test(url.pathname)) return;
+
+        const dir = isHome(url.pathname) ? 'back' : 'forward';
+        e.preventDefault();
+        leaving = true;
+        try { sessionStorage.setItem('navSwipe', dir); } catch (err) { /* private mode */ }
+
+        docEl.setAttribute('data-nav-out', dir);
+        const go = () => { window.location.href = url.href; };
+        document.body.addEventListener('animationend', function onEnd(ev) {
+            if (ev.target !== document.body) return;
+            document.body.removeEventListener('animationend', onEnd);
+            go();
+        });
+        window.setTimeout(go, 600);
+    });
 })();
